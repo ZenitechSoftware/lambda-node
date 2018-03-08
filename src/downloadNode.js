@@ -26,7 +26,7 @@ const cleanNodeDir = dirPath => {
 };
 
 const downloadNode = () => (console.log(`Downloading Node.js ${version}...`), https.get(
-    `https://nodejs.org/dist/v${version}/node-v${version}-darwin-x64.tar.gz`,
+    `https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.gz`,
     response => response
         .pipe((console.log('Unzipping...'), zlib.createGunzip()))
         .on('error', error => console.error('Error unzipping Node.js', error))
