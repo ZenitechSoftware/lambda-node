@@ -46,7 +46,7 @@ module.exports = (event, context, callback) =>
             : handleNodeChildProcess(
                 spawn(
                     `${__dirname}/../.node/bin/node`,
-                    ['src/lambdaFunctionInvoker'],
+                    [`${__dirname}/lambdaFunctionInvoker`],
                     { stdio: [process.stdin, process.stdout, process.stderr, 'ipc'] }
                 ),
                 event,
