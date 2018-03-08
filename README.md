@@ -2,6 +2,8 @@
 
 The module allows you to run your JavaScript code on any Node.js version in AWS Lambda.
 
+AWS Lambda rarely updates Node.js version, in fact AWS Lambda Node.js version problem looks  similar to one Babel tries to solve for JS versions. This module enables you to use latest Node.js version with latest features and bug/security fixes.
+
 ## Quick start
 
 ### Installation
