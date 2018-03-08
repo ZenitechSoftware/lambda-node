@@ -1,5 +1,5 @@
 {
-  "name": "lambda-node",
+  "name": "lambda-node-runtime",
   "version": "0.0.1",
   "description": "Run any Node version on AWS Lambda",
   "main": "index.js",
