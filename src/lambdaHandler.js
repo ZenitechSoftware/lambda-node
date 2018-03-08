@@ -45,7 +45,7 @@ module.exports = (event, context, callback) =>
             ? callback(new Error(errors.INVALID_LAMBDA_NODE_HANDLER_ENV_VAR))
             : handleNodeChildProcess(
                 spawn(
-                    './.node/bin/node',
+                    `${__dirname}/../.node/bin/node`,
                     ['src/lambdaFunctionInvoker'],
                     { stdio: [process.stdin, process.stdout, process.stderr, 'ipc'] }
                 ),
