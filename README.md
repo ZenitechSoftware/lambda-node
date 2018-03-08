@@ -27,9 +27,9 @@ node_modules/lambda-node-runtime/index.handler
 ```
 
 ## How it works
-When you install `lambda-node-runtime` module it downloads Node 8 in `node_modules` dir. Therefore, when you create an AWS Lambda package it includes Node 8. When AWS Lambda package is deployed and invoked bundled Node 8 child process starts and executes your JS code.
+When you install `lambda-node-runtime` module it downloads Node (currently version 8.10.0) in `node_modules` dir. Therefore, when you create an AWS Lambda package it includes desired Node runtime. When AWS Lambda package is deployed and invoked, bundled Node child process starts and executes your JS code.
 
 ### Why is this possible?
 It is possible to run Node version of your desire because Node binary is relatively small (around 10 MB when zipped) so there is plenty of space left for code (AWS Lambda package size restriction is 50 MB).
 
-Also Node is fast to start so there is almost no latency after you invoke AWS Lambda function and when it actually starts running the code.
+Also Node is fast to start so the latency between when you invoke AWS Lambda function and when it actually starts running the code is lower. Please note that latency is still there because new child process must be started. More details (comparisons, benchmarks) will be provided after the module is used for a number of projects.
