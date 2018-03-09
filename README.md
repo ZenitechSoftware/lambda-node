@@ -27,9 +27,19 @@ Set AWS Lambda Handler to expression
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
+Optionally set desired Node.js version in `package.json` (default version is 8.10.0)
+```json
+{
+    ...
+    "lambda-node-runtime": {
+        "node-version": "8.10.0"
+    }
+    ...
+}
+```
 
 ## How it works
-When you install `lambda-node-runtime` module it downloads Node (currently version 8.10.0) in `node_modules` dir. Therefore, when you create an AWS Lambda package it includes desired Node runtime. When AWS Lambda package is deployed and invoked, bundled Node child process starts and executes your JS code.
+When you install `lambda-node-runtime` module it downloads Node to `node_modules/lambda-node-runtime/.node` dir. Therefore, when you create an AWS Lambda package it includes desired Node runtime. When AWS Lambda package is deployed and invoked, bundled Node child process starts and executes your JS code.
 
 ### Why is this possible?
 It is possible to run Node version of your desire because Node binary is relatively small (around 10 MB when zipped) so there is plenty of space left for code (AWS Lambda package size restriction is 50 MB).
