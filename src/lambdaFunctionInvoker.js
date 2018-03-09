@@ -26,11 +26,18 @@ const handlePromise = result =>
 
 const handlerMethod = () => process.env.LAMBDA_NODE_HANDLER.split('.')[1];
 
+const formatContext = context => ({
+  ...context,
+  set callbackWaitsForEmptyEventLoop(isCallbackWaitsForEmptyEventLoop) {
+    process.send({ type: 'IS_CALLBACK_WAITS_FOR_EMPTY_EVENT_LOOP', content: isCallbackWaitsForEmptyEventLoop });
+  }
+});
+
 const invokeHandler = (event, context) =>
   resolveLambdaFunction((error, lambdaFunction) =>
     error
       ? handleResult(error)
-      : handlePromise(lambdaFunction(event, context, handleResult)));
+      : handlePromise(lambdaFunction(event, formatContext(context), handleResult)));
 
 process.on(
   'message',

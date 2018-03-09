@@ -138,4 +138,15 @@ describe('Lambda Node', () => {
       );
     });
   });
+  context('Lambda function sets callbackWaitsForEmptyEventLoop to true', () => {
+    it('should complete function', cb => {
+      let context = {};
+      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.setCallbackWaitsForEmptyEventLoopToTrue';
+      lambdaNode.handler(
+        null,
+        context,
+        () => (assert.equal(context.callbackWaitsForEmptyEventLoop, true), cb())
+      );
+    });
+  });
 });

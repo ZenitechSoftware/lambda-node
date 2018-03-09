@@ -8,15 +8,20 @@ class CloseError extends Error {
   }
 };
 
+let nodeChildProcess = null;
+let nodeHandlerExpression = null;
+
 const createError = errorMessage => errorMessage ? new Error(errorMessage) : null;
 
 const returnResult = (nodeChildProcess, errorMessage, result, callback) =>
   callback(createError(errorMessage), result);
 
-const handleMessage = (nodeChildProcess, message, callback) =>
+const handleMessage = (nodeChildProcess, message, context, callback) =>
   message.type === 'RESULT'
     ? returnResult(nodeChildProcess, message.content.errorMessage, message.content.result, callback)
-    : console.error('IPC: invalid message', message)
+    : message.type === 'IS_CALLBACK_WAITS_FOR_EMPTY_EVENT_LOOP'
+      ? context.callbackWaitsForEmptyEventLoop = message.content
+      : console.error('IPC: invalid message', message)
 
 const handlerArguments = (event, context) => ({
   event,
@@ -40,10 +45,7 @@ const handleNodeChildProcess = (nodeChildProcess, event, context, callback) =>
   nodeChildProcess
     .on('close', (code, signal) => callback(buildCloseError(code, signal)))
     .on('error', callback)
-    .on('message', message => handleMessage(nodeChildProcess, message, callback));
-
-let nodeChildProcess = null;
-let nodeHandlerExpression = null;
+    .on('message', message => handleMessage(nodeChildProcess, message, context, callback));
 
 const getNodeChildProcess = (event, context, callback) => {
   if (nodeChildProcess) {
@@ -65,14 +67,16 @@ const getNodeChildProcess = (event, context, callback) => {
   return nodeChildProcess;
 };
 
-const runtimeCallback = callback => (error, result) => {
+const runtimeCallback = (callback, context) => (error, result) => {
   if (error instanceof CloseError) {
     nodeChildProcess = null;
-    nodeHandlerExpression = null;
+  } else if (context.callbackWaitsForEmptyEventLoop) {
+    nodeChildProcess.disconnect();
+    nodeChildProcess = null;
   } else {
-    nodeHandlerExpression = process.env.LAMBDA_NODE_HANDLER;
     nodeChildProcess.removeAllListeners();
   }
+  nodeHandlerExpression = process.env.LAMBDA_NODE_HANDLER;
   callback(error, result);
 };
 
@@ -82,7 +86,7 @@ module.exports = (event, context, callback) => {
     ? callback(new Error(errors.NO_LAMBDA_NODE_HANDLER_ENV_VAR))
     : !/.+\..+/.test(process.env.LAMBDA_NODE_HANDLER)
       ? callback(new Error(errors.INVALID_LAMBDA_NODE_HANDLER_ENV_VAR))
-      : getNodeChildProcess(event, context, runtimeCallback(callback)).send(
+      : getNodeChildProcess(event, context, runtimeCallback(callback, context)).send(
         { type: 'HANDLER_ARGS', content: handlerArguments(event, context) }
       );
 };

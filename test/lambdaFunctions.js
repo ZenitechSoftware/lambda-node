@@ -14,6 +14,8 @@ module.exports.throwError = (event, context, callback) => {
   throw new Error('Test error');
 };
 
-module.exports.killSigTerm = (event, context, callback) => {
+module.exports.killSigTerm = (event, context, callback) =>
   process.kill(process.pid, 'SIGTERM');
-};
+
+module.exports.setCallbackWaitsForEmptyEventLoopToTrue = async (event, context) =>
+  context.callbackWaitsForEmptyEventLoop = true;
