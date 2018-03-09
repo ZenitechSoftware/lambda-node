@@ -65,7 +65,7 @@ describe('Lambda Node', () => {
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
-    it('should respond with request event', cb => {
+    it('should respond with request context', cb => {
       process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.returnContext';
       const context = {
         functionName: 'TestFunction',
