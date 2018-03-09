@@ -65,6 +65,29 @@ describe('Lambda Node', () => {
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
+    it('should respond with request event', cb => {
+      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.returnContext';
+      const context = {
+        functionName: 'TestFunction',
+        functionVersion: '1.0.0',
+        invokedFunctionArn: 'arn://test',
+        memoryLimitInMB: 1024,
+        awsRequestId: 'test-request-id',
+        logGroupName: 'logs/test',
+        logStreamName: 'stream/test',
+        identity: 123,
+        clientContext: {
+          env: {
+            make: 'Apple'
+          }
+        },
+      };
+      lambdaNode.handler(
+        null,
+        { ...context },
+        (error, result) => (assert.deepEqual(result, context), cb())
+      );
+    });
   });
   context('Lambda function invokes callback', () => {
     it('should respond with error', cb => {

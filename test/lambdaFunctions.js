@@ -1,5 +1,7 @@
 module.exports.returnEvent = async (event, context) => event;
 
+module.exports.returnContext = async (event, context) => context;
+
 module.exports.returnError = async (event, context) => {
   throw new Error('Test error');
 };
