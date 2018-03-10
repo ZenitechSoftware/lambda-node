@@ -5,13 +5,27 @@ const zlib = require('zlib');
 const tar = require('tar');
 
 const NODE_DIR = '.node';
-const DEFAULT_VERSION = '8.10.0';
+const DEFAULT_CODENAME = 'Carbon';
 
-const version = () => {
+const streamToJson = (stream, cb) => {
+  let str = '';
+  stream
+    .on('data', data => str += data.toString())
+    .on('end', () => cb(null, JSON.parse(str)))
+    .on('error', cb);
+}
+
+const version = callback => {
   try {
-    return require(`${__dirname}/../../../package.json`)['lambda-node-runtime']['node-version'];
+    callback(null, require(`${__dirname}/../../../package.json`)['lambda-node-runtime']['node-version']);
   } catch (error) {
-    return DEFAULT_VERSION;
+    https.get('https://nodejs.org/dist/index.json', response => streamToJson(
+      response,
+      (error, nodeVersions) =>
+        error
+          ? callback(error)
+          : callback(null, nodeVersions.find(nodeVersion => nodeVersion.lts === DEFAULT_CODENAME).version.substring(1))
+    ));
   }
 };
 
@@ -43,4 +57,4 @@ const downloadNode = (version) => (console.log(`Downloading Node.js ${version}..
     .on('close', () => (console.log('Cleaning...'), cleanNodeDir(NODE_DIR)))
 ).on('error', error => (console.error('Error downloading Node.js', error), process.exit(1))));
 
-(fs.existsSync(NODE_DIR) || fs.mkdirSync(NODE_DIR), downloadNode(version()));
+(fs.existsSync(NODE_DIR) || fs.mkdirSync(NODE_DIR), version((error, version) => error ? console.error(error) : downloadNode(version)));

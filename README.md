@@ -27,12 +27,12 @@ Set AWS Lambda Handler to expression
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
-Optionally set desired Node.js version in `package.json` (default version is 8.10.0)
+Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon))
 ```json
 {
     ...
     "lambda-node-runtime": {
-        "node-version": "8.10.0"
+        "node-version": "9.8.0"
     }
     ...
 }
