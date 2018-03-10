@@ -1,6 +1,6 @@
 {
   "name": "lambda-node-runtime",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Run any Node version on AWS Lambda",
   "main": "index.js",
   "repository": "github:ZenitechSoftware/lambda-node",
