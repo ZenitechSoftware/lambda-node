@@ -23,18 +23,18 @@ Reference your handler using AWS Lambda Environment Variable
 ```
 LAMBDA_NODE_HANDLER=index.handler
 ```
-Set AWS Lambda Handler to expression
+Choose `Node.js 6.10` AWS Lambda Runtime and set AWS Lambda Handler to expression
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
 Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon))
 ```json
 {
-    ...
+    "name": "your-lambda-function",
+    "version": "1.0.0",
     "lambda-node-runtime": {
         "node-version": "9.8.0"
     }
-    ...
 }
 ```
 
