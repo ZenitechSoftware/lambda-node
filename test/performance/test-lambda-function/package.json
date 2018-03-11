@@ -1,0 +1,7 @@
+{
+  "name": "test-lambda-function",
+  "version": "1.0.0",
+  "dependencies": {
+    "lambda-node-runtime": "0.0.14"
+  }
+}

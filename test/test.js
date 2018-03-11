@@ -4,7 +4,7 @@ const { assert } = require('chai');
 const lambdaNode = require('../index');
 const errors = require('../src/errors');
 
-describe('Lambda Node', () => {
+describe('Lambda Node Runtime', () => {
   it('should set callbackWaitsForEmptyEventLoop to false', cb => {
     let context = {};
     delete process.env.LAMBDA_NODE_HANDLER;

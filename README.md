@@ -19,11 +19,17 @@ module.exports.handler = async (event, context) => {
     // Your code
 }
 ```
+or
+```js
+module.exports.handler = (event, context, callback) => {
+    // Your code
+}
+```
 Reference your handler using AWS Lambda Environment Variable
 ```
 LAMBDA_NODE_HANDLER=index.handler
 ```
-Choose `Node.js 6.10` AWS Lambda Runtime and set AWS Lambda Handler to expression
+Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see `Benchmarks` section for more details) and set AWS Lambda Handler to expression
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
@@ -44,8 +50,31 @@ When you install `lambda-node-runtime` module it downloads Node to `node_modules
 ### Why is this possible?
 It is possible to run Node version of your desire because Node binary is relatively small (around 10 MB when zipped) so there is plenty of space left for code (AWS Lambda package size restriction is 50 MB).
 
-Also Node is fast to start so the latency between when you invoke AWS Lambda function and when it actually starts running the code is lower.
+Also Node is fast to start so the latency between when you invoke AWS Lambda Function and when it actually starts running the code is lower.
 
-Please note that latency is there because new Node.js child process must be started. However, Node.js child process is reused in hot AWS Lambda function meaning only cold start is slower.
+Please note that latency is there because new Node.js child process must be started. However, Node.js child process is reused in warm AWS Lambda Function meaning only cold start is slower.
 
-More details (comparisons, benchmarks) will be provided after the module is used for a number of projects.
+### Benchmarks
+This aim of this section is help you to understand `lambda-node-runtime` module suitability for your use case.
+
+The chart depicts execution of test AWS Lambda Function (that returns the event object passed to it)
+```js
+module.exports.handler = (event, context, callback) => {
+    callback(null, event);
+}
+```
+Both AWS Lambda Functions are allocated 128 MB of Memory.
+
+![With vs Without lambda-node-runtime](docs/with-vs-without-lambda-node-runtime-1-10.png)
+
+It takes around 4 seconds for cold AWS Lambda Function to start in case of `lambda-node-runtime` is used (compared to 20 milliseconds in case of plain AWS Lambda Runtime). According to [this article](https://read.acloud.guru/how-long-does-aws-lambda-keep-your-idle-functions-around-before-a-cold-start-bf715d3b810) AWS keeps the idle Lambda Function warm for up to 1 hour.
+
+Let's hide the first run to compare subsequent runs.
+
+![With vs Without lambda-node-runtime](docs/with-vs-without-lambda-node-runtime-2-10.png)
+
+Subsequent runs duration (except 2nd and 7th runs) is very similar. Please note that despite 2nd and 7th runs take relatively longer, it is only around 5 milliseconds.
+
+The reasons why all the runs with `lambda-node-runtime` take a bit longer are:
+- the effort to resume the frozen Node.js child process in warm AWS Lambda Function before each run
+- the effort to serialize event and result objects between parent and child processes using IPC 
