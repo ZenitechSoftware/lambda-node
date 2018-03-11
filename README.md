@@ -29,7 +29,7 @@ Reference your handler using AWS Lambda Environment Variable
 ```
 LAMBDA_NODE_HANDLER=index.handler
 ```
-Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see `Benchmarks` section for more details) and set AWS Lambda Handler to expression
+Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see [Benchmarks](#benchmarks) section for more details) and set AWS Lambda Handler to expression
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
