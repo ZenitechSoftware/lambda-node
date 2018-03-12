@@ -45,10 +45,10 @@ Optionally set desired Node.js version in `package.json` (default is latest LTS 
 ```
 
 ## How it works
-When you install `lambda-node-runtime` module it downloads Node to `node_modules/lambda-node-runtime/.node` dir. Therefore, when you create an AWS Lambda package it includes desired Node runtime. When AWS Lambda package is deployed and invoked, bundled Node child process starts and executes your JS code.
+When you install `lambda-node-runtime` module it downloads Node to `node_modules/lambda-node-runtime/.node` dir. Therefore, when you create an AWS Lambda Function package it includes desired Node runtime. When AWS Lambda Function package is deployed and invoked, bundled Node child process starts and executes your JS code.
 
 ### Why is this possible?
-It is possible to run Node version of your desire because Node binary is relatively small (around 10 MB when zipped) so there is plenty of space left for code (AWS Lambda package size restriction is 50 MB).
+It is possible to run Node version of your desire because Node binary is relatively small (around 10 MB when zipped) so there is plenty of space left for code (AWS Lambda Function package size restriction is 50 MB).
 
 Also Node is fast to start so the latency between when you invoke AWS Lambda Function and when it actually starts running the code is lower.
 
@@ -69,6 +69,10 @@ Both AWS Lambda Functions are allocated 128 MB of Memory.
 
 It takes around 4 seconds for cold AWS Lambda Function to start in case of `lambda-node-runtime` is used (compared to 20 milliseconds in case of plain AWS Lambda Runtime). According to [this article](https://read.acloud.guru/how-long-does-aws-lambda-keep-your-idle-functions-around-before-a-cold-start-bf715d3b810) AWS keeps the idle Lambda Function warm for up to 1 hour.
 
+The reasons why the first run with `lambda-node-runtime` takes significantly longer are:
+- the effort to uncompress larger Lambda Function Package
+- the effort to start a new process (i.e.: allocate memory, resource descriptors)
+
 Let's hide the first run to compare subsequent runs.
 
 ![With vs Without lambda-node-runtime](docs/with-vs-without-lambda-node-runtime-2-10.png)
@@ -77,4 +81,4 @@ Subsequent runs duration (except 2nd and 7th runs) is very similar. Please note 
 
 The reasons why all the runs with `lambda-node-runtime` take a bit longer are:
 - the effort to resume the frozen Node.js child process in warm AWS Lambda Function before each run
-- the effort to serialize event and result objects between parent and child processes using IPC 
+- the effort to serialize event and result objects between parent and child processes using IPC
