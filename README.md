@@ -67,11 +67,9 @@ Both AWS Lambda Functions are allocated 128 MB of Memory.
 
 ![With vs Without lambda-node-runtime](docs/with-vs-without-lambda-node-runtime-1-10.png)
 
-It takes around 4 seconds for cold AWS Lambda Function to start in case of `lambda-node-runtime` is used (compared to 20 milliseconds in case of plain AWS Lambda Runtime). According to [this article](https://read.acloud.guru/how-long-does-aws-lambda-keep-your-idle-functions-around-before-a-cold-start-bf715d3b810) AWS keeps the idle Lambda Function warm for up to 1 hour.
+It takes around 4 seconds for cold AWS Lambda Function to start in case of `lambda-node-runtime` is used (compared to 20 milliseconds in case of plain AWS Lambda Runtime). According to [this article](https://read.acloud.guru/how-long-does-aws-lambda-keep-your-idle-functions-around-before-a-cold-start-bf715d3b810) AWS keeps the idle Lambda Function warm for up to 1 hour. It is also important to understant that cold start happends once for each AWS Lambda Function concurrent exection. [Here is a good article that provides more details](https://hackernoon.com/im-afraid-you-re-thinking-about-aws-lambda-cold-starts-all-wrong-7d907f278a4f). 
 
-The reasons why the first run with `lambda-node-runtime` takes significantly longer are:
-- the effort to uncompress larger Lambda Function Package
-- the effort to start a new process (i.e.: allocate memory, resource descriptors)
+The reason why the first run with `lambda-node-runtime` takes significantly longer is significant amount of CPU required to start a new process (i.e.: allocate memory, resource descriptors). [AWS Lambda allocates CPU power proportional to the memory](https://docs.aws.amazon.com/lambda/latest/dg/resource-model.html). It takes around 200 ms (20 times less than when 128 MB of Memory is allocated) for first run to complete in case 3 GB/RAM of Memory is allocated for AWS Lambda Function.
 
 Let's hide the first run to compare subsequent runs.
 
