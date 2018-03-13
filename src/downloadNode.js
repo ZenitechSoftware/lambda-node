@@ -32,7 +32,7 @@ const version = callback => {
 const cleanNodeDir = dirPath => {
   fs.readdirSync(dirPath).forEach(file => {
     const curPath = path.join(dirPath, file);
-    if (curPath == path.join(NODE_DIR, 'bin')) {
+    if (curPath == path.join(NODE_DIR, 'bin', 'node')) {
       return;
     }
     if (fs.lstatSync(curPath).isDirectory()) {
@@ -41,7 +41,7 @@ const cleanNodeDir = dirPath => {
       fs.unlinkSync(curPath);
     }
   });
-  if (dirPath === NODE_DIR) {
+  if ((dirPath === NODE_DIR) || (dirPath === path.join(NODE_DIR, 'bin'))) {
     return;
   }
   fs.rmdirSync(dirPath);
