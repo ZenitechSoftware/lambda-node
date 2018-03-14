@@ -6,6 +6,7 @@ const resolveLambdaFunction = (callback) => {
   try {
     handlerModule = require(`${process.cwd()}/${moduleName}`);
   } catch (error) {
+    console.error(error);
     return callback(new Error(errors.NO_HANDLER_MODULE(moduleName)));
   }
   const lambdaFunction = handlerModule[functionName];
