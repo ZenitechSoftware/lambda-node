@@ -19,3 +19,8 @@ module.exports.killSigTerm = (event, context, callback) =>
 
 module.exports.setCallbackWaitsForEmptyEventLoopToTrue = async (event, context) =>
   context.callbackWaitsForEmptyEventLoop = true;
+
+module.exports.runOnServerlessLocal = (event, context, callback) => {
+  console.log(process.version);
+  callback(null, event);
+};

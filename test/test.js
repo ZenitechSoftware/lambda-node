@@ -138,6 +138,18 @@ describe('Lambda Node Runtime', () => {
       );
     });
   });
+  context('Lambda function runs on serverless local environment', () => {
+    it('should respond with request event', cb => {
+      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.runOnServerlessLocal';
+      process.env.IS_LOCAL = true;
+      const event = { type: 'TEST' };
+      lambdaNode.handler(
+        event,
+        {},
+        (error, result) => (assert.deepEqual(result, event), cb())
+      );
+    });
+  });
   context('Lambda function sets callbackWaitsForEmptyEventLoop to true', () => {
     it('should complete function', cb => {
       let context = {};

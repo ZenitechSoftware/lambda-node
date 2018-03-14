@@ -13,27 +13,29 @@ npm install lambda-node-runtime -S
 ```
 
 ### Usage
-Write a module that holds AWS Lambda handler:
+Write a module that holds AWS Lambda handler (i.e.: `index.js`):
 ```js
+// index.js
 module.exports.handler = async (event, context) => {
     // Your code
 }
 ```
 or
 ```js
+// index.js
 module.exports.handler = (event, context, callback) => {
     // Your code
 }
 ```
-Reference your handler using AWS Lambda Environment Variable
+Reference your handler using AWS Lambda Environment Variable (i.e.: `index.js`):
 ```
 LAMBDA_NODE_HANDLER=index.handler
 ```
-Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see [Benchmarks](#benchmarks) section for more details) and set AWS Lambda Handler to expression
+Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see [Benchmarks](#benchmarks) section for more details) and set AWS Lambda Handler to expression:
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
-Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon))
+Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon)):
 ```json
 {
     "name": "your-lambda-function",
@@ -43,6 +45,20 @@ Optionally set desired Node.js version in `package.json` (default is latest LTS 
     }
 }
 ```
+
+### Serverless support
+Example `serverless.yml` configuration:
+```yml
+functions:
+  yourLambdaFunction:
+    handler: node_modules/lambda-node-runtime/index.handler
+    runtime: nodejs6.10
+    timeout: 4 # Cold start might take up to 4 seconds.
+    environment:
+        LAMBDA_NODE_HANDLER: index.handler # when handler method `handler` is in `index.js` module
+```
+
+Please note that when running `serverless invoke local` command, development Node.js version is used (not the one downloaded by the module).
 
 ## How it works
 When you install `lambda-node-runtime` module it downloads Node to `node_modules/lambda-node-runtime/.node` dir. Therefore, when you create an AWS Lambda Function package it includes desired Node runtime. When AWS Lambda Function package is deployed and invoked, bundled Node child process starts and executes your JS code.

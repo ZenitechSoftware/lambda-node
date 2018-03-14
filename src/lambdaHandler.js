@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, fork } = require('child_process');
 
 const errors = require('./errors');
 
@@ -55,11 +55,17 @@ const getNodeChildProcess = (event, context, callback) => {
     nodeChildProcess.disconnect();
   }
   nodeChildProcess = handleNodeChildProcess(
-    spawn(
-      `${__dirname}/../.node/bin/node`,
-      [`${__dirname}/lambdaFunctionInvoker`],
-      { stdio: [process.stdin, process.stdout, process.stderr, 'ipc'] }
-    ),
+    process.env.IS_LOCAL
+      ? fork(
+        `${__dirname}/lambdaFunctionInvoker`,
+        [],
+        { stdio: [process.stdin, process.stdout, process.stderr, 'ipc'] }
+      )
+      : spawn(
+        `${__dirname}/../.node/bin/node`,
+        [`${__dirname}/lambdaFunctionInvoker`],
+        { stdio: [process.stdin, process.stdout, process.stderr, 'ipc'] }
+      ),
     event,
     context,
     callback
