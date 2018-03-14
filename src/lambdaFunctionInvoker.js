@@ -1,11 +1,27 @@
 const errors = require('./errors');
 
+const replaceErrors = (key, value) => {
+  if (value instanceof Error) {
+      var error = {};
+      Object.getOwnPropertyNames(value).forEach(function (key) {
+          if (key === 'stack' || key === 'stackTrace') {
+            error[key] = value[key].split('\n');
+          } else {
+            error[key] = value[key];
+          }
+      });
+      return error;
+  }
+  return value;
+}
+
 const resolveLambdaFunction = (callback) => {
   const [moduleName, functionName] = process.env.LAMBDA_NODE_HANDLER.split('.');
   let handlerModule = null;
   try {
     handlerModule = require(`${process.cwd()}/${moduleName}`);
   } catch (error) {
+    console.error(JSON.stringify(error, replaceErrors));
     return callback(new Error(errors.NO_HANDLER_MODULE(moduleName)));
   }
   const lambdaFunction = handlerModule[functionName];
