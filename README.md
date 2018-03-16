@@ -35,6 +35,9 @@ Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
+Your AWS Lambda Function configuration should looks something like:
+![AWS Lambda Function configuration for lambda-node-runtime](docs/lambda-node-runtime-configuration.png)
+
 Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon)):
 ```json
 {
