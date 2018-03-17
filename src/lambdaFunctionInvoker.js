@@ -27,22 +27,23 @@ const handlePromise = result =>
 
 const handlerMethod = () => process.env.LAMBDA_NODE_HANDLER.split('.')[1];
 
-const formatContext = context => ({
+const formatContext = (context, remainingTimeInMillis, timestamp) => ({
   ...context,
   set callbackWaitsForEmptyEventLoop(isCallbackWaitsForEmptyEventLoop) {
     process.send({ type: 'IS_CALLBACK_WAITS_FOR_EMPTY_EVENT_LOOP', content: isCallbackWaitsForEmptyEventLoop });
-  }
+  },
+  getRemainingTimeInMillis: () => remainingTimeInMillis - (new Date().getTime() - timestamp),
 });
 
-const invokeHandler = (event, context) =>
+const invokeHandler = ({event, context, remainingTimeInMillis, timestamp}) =>
   resolveLambdaFunction((error, lambdaFunction) =>
     error
       ? handleResult(error)
-      : handlePromise(lambdaFunction(event, formatContext(context), handleResult)));
+      : handlePromise(lambdaFunction(event, formatContext(context, remainingTimeInMillis, timestamp), handleResult)));
 
 process.on(
   'message',
   message => message.type === 'HANDLER_ARGS'
-    ? invokeHandler(message.content.event, message.content.context)
+    ? invokeHandler(message.content)
     : console.error('IPC: invalid message', message)
 );

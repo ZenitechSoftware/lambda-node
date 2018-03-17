@@ -24,3 +24,7 @@ module.exports.runOnServerlessLocal = (event, context, callback) => {
   console.log(process.version);
   callback(null, event);
 };
+
+module.exports.returnRemainingTimeInMillis = (event, context, callback) => {
+  setTimeout(() => callback(null, context.getRemainingTimeInMillis()), 3000);
+};

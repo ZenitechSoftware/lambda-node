@@ -6,7 +6,7 @@ const errors = require('../src/errors');
 
 describe('Lambda Node Runtime', () => {
   it('should set callbackWaitsForEmptyEventLoop to false', cb => {
-    let context = {};
+    let context = { getRemainingTimeInMillis: () => 6000 };
     delete process.env.LAMBDA_NODE_HANDLER;
     lambdaNode.handler(
       null,
@@ -19,7 +19,7 @@ describe('Lambda Node Runtime', () => {
     delete process.env.LAMBDA_NODE_HANDLER;
     lambdaNode.handler(
       null,
-      {},
+      { getRemainingTimeInMillis: () => 6000 },
       error => (assert.equal(error.message, errors.NO_LAMBDA_NODE_HANDLER_ENV_VAR), cb())
     );
   });
@@ -27,7 +27,7 @@ describe('Lambda Node Runtime', () => {
     process.env.LAMBDA_NODE_HANDLER = 'invalid value';
     lambdaNode.handler(
       null,
-      {},
+      { getRemainingTimeInMillis: () => 6000 },
       error => (assert.equal(error.message, errors.INVALID_LAMBDA_NODE_HANDLER_ENV_VAR), cb())
     );
   });
@@ -35,7 +35,7 @@ describe('Lambda Node Runtime', () => {
     process.env.LAMBDA_NODE_HANDLER = 'does/not/exist.handlerThatDoesNotExist';
     lambdaNode.handler(
       null,
-      {},
+      { getRemainingTimeInMillis: () => 6000 },
       error => (assert.equal(error.message, errors.NO_HANDLER_MODULE('does/not/exist')), cb())
     );
   });
@@ -43,7 +43,7 @@ describe('Lambda Node Runtime', () => {
     process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.handlerThatDoesNotExist';
     lambdaNode.handler(
       null,
-      {},
+      { getRemainingTimeInMillis: () => 6000 },
       error => (assert.equal(error.message, errors.NO_HANDLER_FUNCTION('handlerThatDoesNotExist')), cb())
     );
   });
@@ -52,7 +52,7 @@ describe('Lambda Node Runtime', () => {
       process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.returnError';
       lambdaNode.handler(
         {},
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         error => (assert.equal(error.message, 'Test error'), cb())
       );
     });
@@ -61,7 +61,7 @@ describe('Lambda Node Runtime', () => {
       const event = { type: 'TEST' };
       lambdaNode.handler(
         event,
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
@@ -84,7 +84,7 @@ describe('Lambda Node Runtime', () => {
       };
       lambdaNode.handler(
         null,
-        { ...context },
+        { ...context, getRemainingTimeInMillis: () => 6000 },
         (error, result) => (assert.deepEqual(result, context), cb())
       );
     });
@@ -95,7 +95,7 @@ describe('Lambda Node Runtime', () => {
       const event = { type: 'TEST' };
       lambdaNode.handler(
         {},
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         error => (assert.equal(error.message, 'Test error'), cb())
       );
     });
@@ -104,7 +104,7 @@ describe('Lambda Node Runtime', () => {
       const event = { type: 'TEST' };
       lambdaNode.handler(
         event,
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
@@ -113,7 +113,7 @@ describe('Lambda Node Runtime', () => {
       const event = { type: 'TEST' };
       lambdaNode.handler(
         event,
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
@@ -122,7 +122,7 @@ describe('Lambda Node Runtime', () => {
         process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.throwError';
         lambdaNode.handler(
           {},
-          {},
+          { getRemainingTimeInMillis: () => 6000 },
           error => (assert.equal(error.message, 'Exit code 1'), cb())
         );
       });
@@ -133,7 +133,7 @@ describe('Lambda Node Runtime', () => {
       process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.killSigTerm';
       lambdaNode.handler(
         {},
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         error => (assert.equal(error.message, 'Exit signal SIGTERM'), cb())
       );
     });
@@ -145,14 +145,24 @@ describe('Lambda Node Runtime', () => {
       const event = { type: 'TEST' };
       lambdaNode.handler(
         event,
-        {},
+        { getRemainingTimeInMillis: () => 6000 },
         (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
   });
+  context('context.getRemainingTimeInMillis function is used', () => {
+    it('should respond with remainingTimeInMillis', cb => {
+      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.returnRemainingTimeInMillis';
+      lambdaNode.handler(
+        {},
+        { getRemainingTimeInMillis: () => 6000 },
+        (error, result) => (assert.approximately(result, 2500, 500), cb())
+      );
+    }).timeout(4000);
+  });
   context('Lambda function sets callbackWaitsForEmptyEventLoop to true', () => {
     it('should complete function', cb => {
-      let context = {};
+      let context = { getRemainingTimeInMillis: () => 6000 };
       process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.setCallbackWaitsForEmptyEventLoopToTrue';
       lambdaNode.handler(
         null,
