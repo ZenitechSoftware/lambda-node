@@ -27,19 +27,19 @@ const handlePromise = result =>
 
 const handlerMethod = () => process.env.LAMBDA_NODE_HANDLER.split('.')[1];
 
-const formatContext = (context, remainingTimeInMillis, timestamp) => ({
+const formatContext = (context, remainingTimestamp) => ({
   ...context,
   set callbackWaitsForEmptyEventLoop(isCallbackWaitsForEmptyEventLoop) {
     process.send({ type: 'IS_CALLBACK_WAITS_FOR_EMPTY_EVENT_LOOP', content: isCallbackWaitsForEmptyEventLoop });
   },
-  getRemainingTimeInMillis: () => remainingTimeInMillis - (new Date().getTime() - timestamp),
+  getRemainingTimeInMillis: () => remainingTimestamp - new Date().getTime(),
 });
 
-const invokeHandler = ({event, context, remainingTimeInMillis, timestamp}) =>
+const invokeHandler = ({event, context, remainingTimestamp}) =>
   resolveLambdaFunction((error, lambdaFunction) =>
     error
       ? handleResult(error)
-      : handlePromise(lambdaFunction(event, formatContext(context, remainingTimeInMillis, timestamp), handleResult)));
+      : handlePromise(lambdaFunction(event, formatContext(context, remainingTimestamp), handleResult)));
 
 process.on(
   'message',

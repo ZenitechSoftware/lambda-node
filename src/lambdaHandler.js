@@ -36,8 +36,7 @@ const handlerArguments = (event, context) => ({
     identity: context.identity,
     clientContext: context.clientContext,
   },
-  remainingTimeInMillis: context.getRemainingTimeInMillis(),
-  timestamp: new Date().getTime(),
+  remainingTimestamp: context.getRemainingTimeInMillis() + new Date().getTime(),
 });
 
 const buildCloseError = (code, signal) =>
