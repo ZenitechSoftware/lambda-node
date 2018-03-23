@@ -77,7 +77,7 @@ const getNodeChildProcess = (event, context, callback) => {
 const runtimeCallback = (callback, context) => (error, result) => {
   if (error instanceof CloseError) {
     nodeChildProcess = null;
-  } else if (context.callbackWaitsForEmptyEventLoop) {
+  } else if (context.callbackWaitsForEmptyEventLoop || process.env.IS_LOCAL) {
     nodeChildProcess.disconnect();
     nodeChildProcess = null;
   } else {

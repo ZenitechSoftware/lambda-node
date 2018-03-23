@@ -138,18 +138,6 @@ describe('Lambda Node Runtime', () => {
       );
     });
   });
-  context('Lambda function runs on serverless local environment', () => {
-    it('should respond with request event', cb => {
-      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.runOnServerlessLocal';
-      process.env.IS_LOCAL = true;
-      const event = { type: 'TEST' };
-      lambdaNode.handler(
-        event,
-        { getRemainingTimeInMillis: () => 6000 },
-        (error, result) => (assert.deepEqual(result, event), cb())
-      );
-    });
-  });
   context('context.getRemainingTimeInMillis function is used', () => {
     it('should respond with remainingTimeInMillis', cb => {
       process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.returnRemainingTimeInMillis';
@@ -168,6 +156,18 @@ describe('Lambda Node Runtime', () => {
         null,
         context,
         () => (assert.equal(context.callbackWaitsForEmptyEventLoop, true), cb())
+      );
+    });
+  });
+  context('Lambda function runs on serverless local environment', () => {
+    it('should respond with request event', cb => {
+      process.env.LAMBDA_NODE_HANDLER = 'test/lambdaFunctions.runOnServerlessLocal';
+      process.env.IS_LOCAL = true;
+      const event = { type: 'TEST' };
+      lambdaNode.handler(
+        event,
+        { getRemainingTimeInMillis: () => 6000 },
+        (error, result) => (assert.deepEqual(result, event), cb())
       );
     });
   });
