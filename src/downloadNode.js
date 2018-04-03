@@ -5,7 +5,7 @@ const zlib = require('zlib');
 const tar = require('tar');
 
 const NODE_DIR = '.node';
-const DEFAULT_CODENAME = 'Carbon';
+const DEFAULT_CODENAME = false;
 
 const streamToJson = (stream, cb) => {
   let str = '';

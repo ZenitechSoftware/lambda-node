@@ -32,14 +32,14 @@ Reference your handler using AWS Lambda Environment Variable (i.e.: `index.js`):
 ```
 LAMBDA_NODE_HANDLER=index.handler
 ```
-Choose `Node.js 6.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see [Benchmarks](#benchmarks) section for more details) and set AWS Lambda Handler to expression:
+Choose `Node.js 8.10` AWS Lambda Runtime, increase Timeout to at least 4 seconds (see [Benchmarks](#benchmarks) section for more details) and set AWS Lambda Handler to expression:
 ```
 node_modules/lambda-node-runtime/index.handler
 ```
 Your AWS Lambda Function configuration should looks something like:
 ![AWS Lambda Function configuration for lambda-node-runtime](docs/lambda-node-runtime-configuration.png)
 
-Optionally set desired Node.js version in `package.json` (default is latest LTS version 8.x (Carbon)):
+Optionally set desired Node.js version in `package.json` (default is latest Node version available):
 ```json
 {
     "name": "your-lambda-function",
@@ -56,7 +56,7 @@ Example `serverless.yml` configuration:
 functions:
   yourLambdaFunction:
     handler: node_modules/lambda-node-runtime/index.handler
-    runtime: nodejs6.10
+    runtime: nodejs8.10
     timeout: 4 # Cold start might take up to 4 seconds.
     environment:
         LAMBDA_NODE_HANDLER: index.handler # when handler method `handler` is in `index.js` module
