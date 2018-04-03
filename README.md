@@ -1,4 +1,5 @@
 # Lambda Node Runtime
+![Lambda Node Runtime](docs/lambda-node-runtime-logo.png)
 
 The module allows you to run your JavaScript code on any Node.js version in AWS Lambda.
 
