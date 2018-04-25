@@ -1,7 +1,7 @@
 # Lambda Node Runtime
 ![Lambda Node Runtime](docs/lambda-node-runtime-logo.png)
 
-The module allows you to run your JavaScript code on any Node.js version in AWS Lambda.
+Run your JavaScript code on newest Node.js version in AWS Lambda.
 
 AWS Lambda rarely updates Node.js version, in fact AWS Lambda Node.js version problem looks  similar to one Babel tries to solve for JS versions. This module enables you to use latest Node.js version with latest features and bug/security fixes.
 
@@ -39,13 +39,13 @@ node_modules/lambda-node-runtime/index.handler
 Your AWS Lambda Function configuration should looks something like:
 ![AWS Lambda Function configuration for lambda-node-runtime](docs/lambda-node-runtime-configuration.png)
 
-Optionally set desired Node.js version in `package.json` (default is latest Node version available):
+Optionally set desired Node.js version in `package.json` (default is latest Node.js 10 version available):
 ```json
 {
     "name": "your-lambda-function",
     "version": "1.0.0",
     "lambda-node-runtime": {
-        "node-version": "9.8.0"
+        "node-version": "10.0.0"
     }
 }
 ```
