@@ -1,4 +1,3 @@
-const { describe, describe: context, it } = require('mocha');
 const { assert } = require('chai');
 const aws = require('aws-sdk');
 
